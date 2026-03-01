@@ -89,8 +89,7 @@ class BTSolver:
                         neighbor.assignValue(neighbor.domain.values[0])
                         assignedVars.append(neighbor)
 
-    "test??"
-    
+
     """
         Part 2 TODO: Implement both of Norvig's Heuristics
 
@@ -139,7 +138,17 @@ class BTSolver:
         Return: The unassigned variable with the smallest domain
     """
     def getMRV ( self ):
-        return None
+        best = None
+        bestSize = float('inf')
+
+        for v in self.network.variables:
+            if not v.isAssigned(): #only unassigned variables
+                size = v.size()
+                if size < bestSize:
+                    bestSize = size
+                    best = v
+
+        return best
 
     """
         Part 2 TODO: Implement the Minimum Remaining Value Heuristic
@@ -150,7 +159,32 @@ class BTSolver:
                 If there is only one variable, return the list of size 1 containing that variable.
     """
     def MRVwithTieBreaker ( self ):
-        return None
+        #finds minimum domain size among unassigned vars
+        minsize = float('inf')
+        for v in self.network.variables:
+            if not v.isAssigned():
+                if v.size < minsize:
+                    minsize = v.size()
+        
+        candidates = []
+        max_unassigned_neighbors = -1
+
+        #filter unassigned with minsize, count neighbors for each
+        for v in self.network.variables:
+            if not v.isAssigned() and v.size() == minsize:
+                unassigned_neighbors = 0
+                for neighbor in self.network.getNeighborsOfVariable(v):
+                    if not neighbor.isAssigned():
+                        unassigned_neighbors += 1
+
+                #only keep maximum unassigned neighbors
+                if unassigned_neighbors > max_unassigned_neighbors:
+                    max_unassigned_neighbors = unassigned_neighbors
+                    candidates = [v]
+                elif unassigned_neighbors == max_unassigned_neighbors:
+                    candidates.append(v)
+
+        return candidates
 
     """
          Optional TODO: Implement your own advanced Variable Heuristic
@@ -180,7 +214,20 @@ class BTSolver:
                 The LCV is first and the MCV is last
     """
     def getValuesLCVOrder ( self, v ):
-        return None
+        #for each value, count how many eliminations it would cause for neighbors
+        value_constraints = []
+        for value in v.getValues():
+            elimination_count = 0
+            for neighbor in self.network.getNeighborsOfVariable(v):
+                if neighbor.getDomain().contains(value):
+                    elimination_count += 1
+            value_constraints.append((value, elimination_count))
+
+        #sort by count of eliminations, least first
+        value_constraints.sort(key=lambda x: x[1]) 
+
+        #extract only values
+        return [value for value, count in value_constraints]
 
     """
          Optional TODO: Implement your own advanced Value Heuristic
