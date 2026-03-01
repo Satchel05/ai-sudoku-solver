@@ -48,7 +48,30 @@ class BTSolver:
                 The bool is true if assignment is consistent, false otherwise.
     """
     def forwardChecking ( self ):
-        return ({},False)
+        # keep track of which values were inconsistent
+        variablesAfterPruning = {}
+        for v in self.network.variables:                                             # For all variables:
+            if v.isAssigned():      
+                value = v.getAssignment()                                            # If a particular variable is assigned:
+                for neighbor in self.network.getNeighborsOfVariable(v):              # Get that variable's neighbors.
+                    # look for inconsistent assignments. Short circuit check with isChangeable to make sure variable can be assigned.
+                    if neighbor.isChangeable and neighbor.getDomain().contains(value):
+
+                        # push to trail to save a snapshot of variable assignments for manager function before pruning
+                        self.trail.push(neighbor)
+
+                        # then prune:
+                        neighbor.removeValueFromDomain(value)
+
+                        # store the results of the prune:
+                        variablesAfterPruning[neighbor] = neighbor.getDomain()
+
+                        # after pruning, check to see if that variable's domain is now empty:
+                        if not neighbor.getDomain():
+                            return (variablesAfterPruning, False)
+        return (variablesAfterPruning, True)
+                    
+
 
     # =================================================================
 	# Arc Consistency
