@@ -71,8 +71,6 @@ class BTSolver:
                             return (variablesAfterPruning, False)
         return (variablesAfterPruning, True)
                     
-
-
     # =================================================================
 	# Arc Consistency
 	# =================================================================
@@ -91,6 +89,7 @@ class BTSolver:
                         neighbor.assignValue(neighbor.domain.values[0])
                         assignedVars.append(neighbor)
 
+    "test??"
     
     """
         Part 2 TODO: Implement both of Norvig's Heuristics
