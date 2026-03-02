@@ -163,7 +163,7 @@ class BTSolver:
         minsize = float('inf')
         for v in self.network.variables:
             if not v.isAssigned():
-                if v.size < minsize:
+                if v.size() < minsize:
                     minsize = v.size()
         
         candidates = []
