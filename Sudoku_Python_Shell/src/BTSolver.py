@@ -109,32 +109,37 @@ class BTSolver:
     """
     def norvigCheck ( self ):
 
-        for v in self.network.variables:
-            if v.isAssigned():
-                currentAssignment = v.getAssignment()
-                neighbors = self.network.getNeighborsOfVariable(v)
-                for neighbor in neighbors:
-                    if neighbor.getDomain().contains(currentAssignment):
-                        self.trail.push(neighbor)
-                        neighbor.removeValueFromDomain(currentAssignment)
+        changed = True
+        while changed:
+            changed = False
+            for v in self.network.variables:
+                if v.isAssigned():
+                    currentAssignment = v.getAssignment()
+                    neighbors = self.network.getNeighborsOfVariable(v)
+                    for neighbor in neighbors:
+                        if neighbor.getDomain().contains(currentAssignment):
+                            self.trail.push(neighbor)
+                            neighbor.removeValueFromDomain(currentAssignment)
 
-                        if neighbor.getDomain().size() == 0:
-                            return ({}, False)
-                    
-                    # Start check 2
-                unitConstraints = self.network.getConstraintsContainingVariable(v)
+                            if neighbor.getDomain().size() == 0:
+                                return ({}, False)
+                            changed = True
+                        
+                        # Start check 2
+                    unitConstraints = self.network.getConstraintsContainingVariable(v)
 
-                for uc in unitConstraints:
-                    for val in range(1, 10):
-                        candidateVars = []
+                    for uc in unitConstraints:
+                        for val in range(1, 10):
+                            candidateVars = []
 
-                        for var in uc.vars:
-                            if var.getDomain().contains(val):
-                                candidateVars.append(var)
-                        if len(candidateVars) == 1 and not candidateVars[0].isAssigned():
-                            self.trail.push(candidateVars[0])
-                            candidateVars[0].assignValue(val)
-                return ({}, True)
+                            for var in uc.vars:
+                                if var.getDomain().contains(val):
+                                    candidateVars.append(var)
+                            if len(candidateVars) == 1 and not candidateVars[0].isAssigned():
+                                self.trail.push(candidateVars[0])
+                                candidateVars[0].assignValue(val)
+                                changed = True
+            return ({}, True)
 
     """
          Optional TODO: Implement your own advanced Constraint Propagation
