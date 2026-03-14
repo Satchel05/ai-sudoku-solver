@@ -131,10 +131,10 @@ class BTSolver:
                         for var in uc.vars:
                             if var.getDomain().contains(val):
                                 candidateVars.append(var)
-                        if len(candidateVars) == 1:
+                        if len(candidateVars) == 1 and not candidateVars[0].isAssigned():
                             self.trail.push(candidateVars[0])
                             candidateVars[0].assignValue(val)
-        return ({}, True)
+                return ({}, True)
 
     """
          Optional TODO: Implement your own advanced Constraint Propagation
