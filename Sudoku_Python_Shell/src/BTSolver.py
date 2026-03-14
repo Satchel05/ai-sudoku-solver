@@ -115,6 +115,7 @@ class BTSolver:
                 neighbors = self.network.getNeighborsOfVariable(v)
                 for neighbor in neighbors:
                     if neighbor.getDomain().contains(currentAssignment):
+                        self.trail.push(neighbor)
                         neighbor.removeValueFromDomain(currentAssignment)
 
                         if neighbor.getDomain().size() == 0:
