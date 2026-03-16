@@ -334,7 +334,11 @@ class BTSolver:
             return self.getMRV()
 
         if self.varHeuristics == "MRVwithTieBreaker":
-            return self.MRVwithTieBreaker()[0]
+            candidates = self.MRVwithTieBreaker()
+            if candidates:
+                return candidates[0]
+            else:
+                return None
 
         if self.varHeuristics == "tournVar":
             return self.getTournVar()
