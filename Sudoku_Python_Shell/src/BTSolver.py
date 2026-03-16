@@ -139,7 +139,7 @@ class BTSolver:
                                 self.trail.push(candidateVars[0])
                                 candidateVars[0].assignValue(val)
                                 changed = True
-            return ({}, True)
+        return ({}, True)
 
     """
          Optional TODO: Implement your own advanced Constraint Propagation
@@ -197,6 +197,9 @@ class BTSolver:
                 if v.size() < minsize:
                     minsize = v.size()
         
+        if minsize == float('inf'):
+            return [None] 
+
         candidates = []
         max_unassigned_neighbors = -1
 
